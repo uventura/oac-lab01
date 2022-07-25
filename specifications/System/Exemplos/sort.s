@@ -1,7 +1,37 @@
-.eqv N 32
+.eqv N 30
 
 .data
-Vetor:  .word 9,2,5,1,8,2,4,3,6,7,10,2,32,54,2,12,6,3,1,78,54,23,1,54,2,65,3,6,55,31,4,-4
+Vetor:  
+	.word   9
+        .word   2
+        .word   5
+        .word   1
+        .word   8
+        .word   2
+        .word   4
+        .word   3
+        .word   6
+        .word   7
+        .word   10
+        .word   2
+        .word   32
+        .word   54
+        .word   2
+        .word   12
+        .word   6
+        .word   3
+        .word   1
+        .word   78
+        .word   54
+        .word   23
+        .word   1
+        .word   54
+        .word   2
+        .word   65
+        .word   3
+        .word   6
+        .word   55
+        .word   31
 
 .text	
 MAIN:	la a0,Vetor
@@ -20,6 +50,7 @@ MAIN:	la a0,Vetor
 	ecall
 
 
+# 7
 SWAP:	slli t1,a1,2
 	add t1,a0,t1
 	lw t0,0(t1)
@@ -28,30 +59,36 @@ SWAP:	slli t1,a1,2
 	sw t0,4(t1)
 	ret
 
-SORT:	addi sp,sp,-20
+SORT:	addi sp,sp,-20 # 9
 	sw ra,16(sp)
 	sw s3,12(sp)
 	sw s2,8(sp)
 	sw s1,4(sp)
 	sw s0,0(sp)
-	mv s2,a0
-	mv s3,a1
-	mv s0,zero
-for1:	bge s0,s3,exit1
-	addi s1,s0,-1
-for2:	blt s1,zero,exit2
-	slli t1,s1,2
-	add t2,s2,t1
-	lw t3,0(t2)
-	lw t4,4(t2)
-	bge t4,t3,exit2
-	mv a0,s2
-	mv a1,s1
-	jal SWAP
-	addi s1,s1,-1
+	mv s2,a0	# endereço do vetor
+	mv s3,a1	# tamanho maximo
+	mv s0,zero	# contador
+
+for1:	bge s0,s3,exit1	# i >= N -> n+1
+	addi s1,s0,-1	# j = i-1 -> n
+	
+for2:	blt s1,zero,exit2 # j < 0 ? exit2 : continua 1,2
+
+	slli t1,s1,2 # t1 = j * 4
+	add t2,s2,t1 # t2 = endereço + j*4
+	lw t3,0(t2)  # t3 <- (t2)
+	lw t4,4(t2)  # t4 <- 4(t2)
+	bge t4,t3,exit2 # t4 >= t3 ? exit2 : continua
+	mv a0,s2 # a0 = endereço
+	mv a1,s1 # a1 = tamanho
+	jal SWAP # Nunca Ocorre
+	addi s1,s1,-1 # j = j-1
 	j for2
-exit2:	addi s0,s0,1
+	# 2 instruções -> n vezes
+exit2:	addi s0,s0,1 
 	j for1
+	
+	# 6 instruções
 exit1: 	lw s0,0(sp)
 	lw s1,4(sp)
 	lw s2,8(sp)
